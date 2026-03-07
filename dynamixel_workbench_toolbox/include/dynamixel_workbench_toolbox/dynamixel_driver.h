@@ -18,7 +18,7 @@
 
 #ifndef DYNAMIXEL_DRIVER_H
 #define DYNAMIXEL_DRIVER_H
-
+#include <vector>
 #include "dynamixel_tool.h"
 
 #if defined(__OPENCR__) || defined(__OPENCM904__)

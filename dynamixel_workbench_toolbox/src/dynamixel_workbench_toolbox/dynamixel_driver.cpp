@@ -786,13 +786,13 @@ bool DynamixelDriver::readRegister(uint8_t id, uint16_t address, uint16_t length
 {
   ErrorFromSDK sdk_error = {0, false, false, 0};
   
-  uint8_t data_read[length];
+  std::vector<uint8_t> data_read(length);
 
   sdk_error.dxl_comm_result = packetHandler_->readTxRx(portHandler_, 
                                                       id, 
                                                       address,
                                                       length, 
-                                                      (uint8_t *)&data_read, 
+                                                      (uint8_t *)data_read.data(), 
                                                       &sdk_error.dxl_error);
   if (sdk_error.dxl_comm_result != COMM_SUCCESS)
   {
@@ -1023,7 +1023,7 @@ bool DynamixelDriver::syncWrite(uint8_t index, uint8_t *id, uint8_t id_num, int3
   ErrorFromSDK sdk_error = {0, false, false, 0};
 
   uint8_t parameter[4] = {0, 0, 0, 0};
-  uint8_t multi_parameter[4*data_num_for_each_id];
+  std::vector<uint8_t> multi_parameter(4*data_num_for_each_id);
   uint8_t cnt = 0;
 
   for (int i = 0; i < id_num; i++)
@@ -1037,7 +1037,7 @@ bool DynamixelDriver::syncWrite(uint8_t index, uint8_t *id, uint8_t id_num, int3
       }
     }
 
-    sdk_error.dxl_addparam_result = syncWriteHandler_[index].groupSyncWrite->addParam(id[i], (uint8_t *)&multi_parameter);
+    sdk_error.dxl_addparam_result = syncWriteHandler_[index].groupSyncWrite->addParam(id[i], (uint8_t *)multi_parameter.data());
     if (sdk_error.dxl_addparam_result != true)
     {
       if (log != NULL) *log = "groupSyncWrite addparam failed";
@@ -1120,7 +1120,7 @@ bool DynamixelDriver::syncRead(uint8_t index, const char **log)
       sdk_error.dxl_addparam_result = syncReadHandler_[index].groupSyncRead->addParam(tools_[i].getID()[j]);
       if (sdk_error.dxl_addparam_result != true)
       {
-        if (log != NULL) *log = "groupSyncWrite addparam failed";
+        if (log != NULL) *log = "groupSyncRead addparam failed";
         return false;
       }
     }
@@ -1147,7 +1147,7 @@ bool DynamixelDriver::syncRead(uint8_t index, uint8_t *id, uint8_t id_num, const
     sdk_error.dxl_addparam_result = syncReadHandler_[index].groupSyncRead->addParam(id[i]);
     if (sdk_error.dxl_addparam_result != true)
     {
-      if (log != NULL) *log = "groupSyncWrite addparam failed";
+      if (log != NULL) *log = "groupSyncRead addparam failed";
       return false;
     }
   }
@@ -1363,7 +1363,7 @@ bool DynamixelDriver::addBulkReadParam(uint8_t id, uint16_t address, uint16_t le
                                                            length);
   if (sdk_error.dxl_addparam_result != true)
   {
-    if (log != NULL) *log = "grouBulkRead addparam failed";
+    if (log != NULL) *log = "group BulkRead addparam failed";
     return false;
   }
 
@@ -1401,7 +1401,7 @@ bool DynamixelDriver::addBulkReadParam(uint8_t id, const char *item_name, const 
                                                           control_item->data_length);
   if (sdk_error.dxl_addparam_result != true)
   {
-    if (log != NULL) *log = "grouBulkRead addparam failed";
+    if (log != NULL) *log = "group BulkRead addparam failed";
     return false;
   }
 
