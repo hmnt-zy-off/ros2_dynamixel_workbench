@@ -1,71 +1,66 @@
 ################################################################################
 # Set minimum required version of cmake, project name and compile options
 ################################################################################
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.8)
 project(dynamixel_workbench_toolbox)
 
-## Compile as C++14, supported in ROS Melodic and newer
-add_compile_options(-std=c++14)
+## Compile as C++17, supported in ROS2 Humble and newer
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
 ################################################################################
-# Find catkin packages and libraries for catkin and system dependencies
+# Find external packages and dependencies
 ################################################################################
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  dynamixel_sdk
-)
-
-################################################################################
-# Setup for python modules and scripts
-################################################################################
-
-################################################################################
-# Declare ROS messages, services and actions
-################################################################################
-
-################################################################################
-# Declare ROS dynamic reconfigure parameters
-################################################################################
-
-################################################################################
-# Declare catkin specific configuration to be passed to dependent projects
-################################################################################
-catkin_package(
- INCLUDE_DIRS include
- LIBRARIES dynamixel_workbench_toolbox
- CATKIN_DEPENDS roscpp dynamixel_sdk
-)
+find_package(ament_cmake REQUIRED)
+find_package(dynamixel_sdk REQUIRED)
 
 ################################################################################
 # Build
 ################################################################################
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-)
+set(LIB_NAME "dynamixel_workbench_toolbox")
 
-add_library(dynamixel_workbench_toolbox
+add_library(${LIB_NAME} SHARED
   src/${PROJECT_NAME}/dynamixel_item.cpp
-  src/${PROJECT_NAME}/dynamixel_driver.cpp
   src/${PROJECT_NAME}/dynamixel_tool.cpp
+  src/${PROJECT_NAME}/dynamixel_driver.cpp
   src/${PROJECT_NAME}/dynamixel_workbench.cpp
+  )
+
+target_include_directories(${LIB_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  ${dynamixel_sdk_INCLUDE_DIRS})
+
+target_link_libraries(${LIB_NAME} PUBLIC
+  ${dynamixel_sdk_LIBRARIES}
 )
-add_dependencies(dynamixel_workbench_toolbox ${catkin_EXPORTED_TARGETS})
-target_link_libraries(dynamixel_workbench_toolbox ${catkin_LIBRARIES})
 
 ################################################################################
 # Install
 ################################################################################
-install(TARGETS dynamixel_workbench_toolbox
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+install(TARGETS ${LIB_NAME}
+  EXPORT export_${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin/${PROJECT_NAME}
 )
 
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+install(DIRECTORY include/
+  DESTINATION include/${PROJECT_NAME}
 )
 
 ################################################################################
 # Test
 ################################################################################
+
+################################################################################
+# ament_packages
+################################################################################
+ament_export_dependencies(dynamixel_sdk)
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_package()
