@@ -16,6 +16,7 @@
 
   <!-- ROS dependencies -->
   <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
   <depend>sensor_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>trajectory_msgs</depend>
