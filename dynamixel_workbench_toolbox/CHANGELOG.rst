@@ -2,6 +2,17 @@
 Changelog for package dynamixel_workbench_toolbox
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.0 (2026-03-12)
+------------------
+* Initial ROS2 Port
+* Updated the Version to 3.0.0 instead of 2.3.0
+
+2.3.0 (2026-03-07)
+------------------
+* Initial ROS2 Port
+* Updated the Build system from catkin to ament_cmake
+* Changed the variable length arrays to std::vectors according to ISO C++ Standards.
+
 2.2.1 (2021-06-29)
 ------------------
 * Added 2XC430-W250, XL330 series
