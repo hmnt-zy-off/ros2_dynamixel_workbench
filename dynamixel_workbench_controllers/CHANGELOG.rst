@@ -2,13 +2,6 @@
 Changelog for package dynamixel_workbench_controllers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3.1.0 (2026-03-18)
-------------------
-* Added ROS 2 lifecycle node support to dynamixel_workbench_controllers
-* Implemented lifecycle states (configure, activate, deactivate, cleanup, shutdown)
-* Refactored controller initialization to align with lifecycle transitions
-* Improved resource management during state changes
-
 3.0.0 (2026-03-12)
 ------------------
 * Initial ROS2 Port of dynamixel_workbench_controllers
