@@ -2,10 +2,7 @@
 Changelog for package dynamixel_workbench_operators
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3.1.0 (2026-03-18)
-------------------
-* Bumped version to 3.1.0 to align with overall framework updates
-
+3.0.0 (2026-03-12)
 ------------------
 * Initial ROS2 Port
 * Updated the build system to ament_cmake.
