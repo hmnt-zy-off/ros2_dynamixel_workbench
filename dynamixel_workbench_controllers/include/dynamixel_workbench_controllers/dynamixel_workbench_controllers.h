@@ -49,6 +49,26 @@
 #define SYNC_WRITE_HANDLER_FOR_GOAL_VELOCITY 1
 #define SYNC_READ_HANDLER_FOR_PRESENT_POSITION_VELOCITY_CURRENT 0
 
+// QoS profiles 
+namespace dxl_qos
+{
+  // Reliable + Volatile (depth 10) — for joint_states, joint_trajectory
+  inline rclcpp::QoS reliable(size_t depth = 10)
+  {
+    return rclcpp::QoS(depth)
+      .reliability(rclcpp::ReliabilityPolicy::Reliable)
+      .durability(rclcpp::DurabilityPolicy::Volatile);
+  }
+
+  // BestEffort + Volatile (depth 10) — for dynamixel_state, cmd_vel
+  inline rclcpp::QoS sensor(size_t depth = 10)
+  {
+    return rclcpp::QoS(depth)
+      .reliability(rclcpp::ReliabilityPolicy::BestEffort)
+      .durability(rclcpp::DurabilityPolicy::Volatile);
+  }
+}  // namespace dxl_qos
+
 using LCL_RET = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
 typedef struct
