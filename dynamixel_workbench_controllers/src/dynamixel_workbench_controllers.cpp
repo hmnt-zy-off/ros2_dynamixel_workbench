@@ -480,10 +480,10 @@ void DynamixelController::initPublisher()
   RCLCPP_DEBUG(this->get_logger(), "*** initPublisher ***");
 
   dynamixel_state_list_pub_ =
-    this->create_publisher<dynamixel_workbench_msgs::msg::DynamixelStateList>("dynamixel_state", dxl_qos::sensor());
+    this->create_publisher<dynamixel_workbench_msgs::msg::DynamixelStateList>("dynamixel_state", 10);
 
   if (is_joint_state_topic_)
-    joint_states_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", dxl_qos::reliable());
+    joint_states_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
 }
 
 void DynamixelController::initSubscriber()
@@ -491,12 +491,12 @@ void DynamixelController::initSubscriber()
   RCLCPP_DEBUG(this->get_logger(), "*** initSubscriber ***");
 
   trajectory_sub_ = this->create_subscription<trajectory_msgs::msg::JointTrajectory>(
-    "joint_trajectory", dxl_qos::reliable(),
+    "joint_trajectory", 10,
     std::bind(&DynamixelController::trajectoryMsgCallback, this, std::placeholders::_1));
 
   if (is_cmd_vel_topic_)
     cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>(
-      "cmd_vel", dxl_qos::sensor(),
+      "cmd_vel", 10,
       std::bind(&DynamixelController::commandVelocityCallback, this, std::placeholders::_1));
 }
 
