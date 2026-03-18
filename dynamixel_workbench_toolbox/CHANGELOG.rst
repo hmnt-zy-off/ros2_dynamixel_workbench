@@ -2,10 +2,9 @@
 Changelog for package dynamixel_workbench_toolbox
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3.0.0 (2026-03-12)
+3.1.0 (2026-03-18)
 ------------------
-* Initial ROS2 Port
-* Updated the Version to 3.0.0 instead of 2.3.0
+* Bumped version to 3.1.0 to align with overall Dynamixel Workbench framework updates
 
 2.3.0 (2026-03-07)
 ------------------
