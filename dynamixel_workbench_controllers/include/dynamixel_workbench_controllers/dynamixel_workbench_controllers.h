@@ -51,6 +51,27 @@
 
 using LCL_RET = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
+// QoS profiles
+namespace dxl_qos
+{
+  // Reliable + Volatile (depth 10) — for joint_states, joint_trajectory
+  // Required by ros2_control, robot_state_publisher, MoveIt2
+  inline rclcpp::QoS reliable(size_t depth = 10)
+  {
+    return rclcpp::QoS(depth)
+      .reliability(rclcpp::ReliabilityPolicy::Reliable)
+      .durability(rclcpp::DurabilityPolicy::Volatile);
+  }
+
+  // BestEffort + Volatile (depth 10) — for dynamixel_state, cmd_vel
+  inline rclcpp::QoS sensor(size_t depth = 10)
+  {
+    return rclcpp::QoS(depth)
+      .reliability(rclcpp::ReliabilityPolicy::BestEffort)
+      .durability(rclcpp::DurabilityPolicy::Volatile);
+  }
+}  // namespace dxl_qos
+
 typedef struct
 {
   std::string item_name;
