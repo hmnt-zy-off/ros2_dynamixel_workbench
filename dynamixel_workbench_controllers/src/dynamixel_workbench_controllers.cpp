@@ -24,7 +24,7 @@ DynamixelController::DynamixelController()
 : rclcpp_lifecycle::LifecycleNode("dynamixel_workbench_controllers"),
   is_joint_state_topic_(false),
   is_cmd_vel_topic_(false),
-  use_moveit_(false),
+  // use_moveit_(false),
   wheel_separation_(0.0f),
   wheel_radius_(0.0f),
   is_moving_(false)
@@ -34,7 +34,7 @@ DynamixelController::DynamixelController()
   this->declare_parameter<bool>("autostart", false);
   this->declare_parameter("use_joint_states_topic", true);
   this->declare_parameter("use_cmd_vel_topic", false);
-  this->declare_parameter("use_moveit", false);
+  // this->declare_parameter("use_moveit", false);
   this->declare_parameter("dxl_read_period", 0.010);
   this->declare_parameter("dxl_write_period", 0.010);
   this->declare_parameter("publish_period", 0.010);
@@ -64,7 +64,7 @@ LCL_RET DynamixelController::on_configure(const rclcpp_lifecycle::State &)
 
   is_joint_state_topic_ = this->get_parameter("use_joint_states_topic").as_bool();
   is_cmd_vel_topic_     = this->get_parameter("use_cmd_vel_topic").as_bool();
-  use_moveit_           = this->get_parameter("use_moveit").as_bool();
+  // use_moveit_           = this->get_parameter("use_moveit").as_bool();
   read_period_          = this->get_parameter("dxl_read_period").as_double();
   write_period_         = this->get_parameter("dxl_write_period").as_double();
   pub_period_           = this->get_parameter("publish_period").as_double();
@@ -77,13 +77,18 @@ LCL_RET DynamixelController::on_configure(const rclcpp_lifecycle::State &)
     wheel_radius_     = this->get_parameter("mobile_robot_config.radius_of_wheel").as_double();
   }
 
-  dxl_wb_  = std::make_unique<DynamixelWorkbench>();
-  jnt_tra_ = std::make_unique<JointTrajectory>();
-
-
   std::string port_name = this->get_parameter("port_name").as_string();
   int         baud_rate = this->get_parameter("baud_rate").as_int();
   std::string yaml_file = this->get_parameter("dynamixel_info").as_string();
+
+  if(yaml_file=="")
+	  {
+	    RCLCPP_WARN(this->get_logger(),"Provide valid YAML file");
+	    return LCL_RET::FAILURE;
+	  }
+
+  dxl_wb_  = std::make_unique<DynamixelWorkbench>();
+  jnt_tra_ = std::make_unique<JointTrajectory>();
 
   if (!initWorkbench(port_name, (uint32_t)baud_rate))
   {
@@ -825,20 +830,20 @@ void DynamixelController::trajectoryMsgCallback(
           goal.push_back(wp);
         }
 
-        if (use_moveit_ == true)
-        {
-          trajectory_msgs::msg::JointTrajectoryPoint jnt_tra_point_msg;
-          for (uint8_t id_num = 0; id_num < id_cnt; id_num++)
-          {
-            jnt_tra_point_msg.positions.push_back(goal[id_num].position);
-            jnt_tra_point_msg.velocities.push_back(goal[id_num].velocity);
-            jnt_tra_point_msg.accelerations.push_back(goal[id_num].acceleration);
-          }
-          jnt_tra_msg_.points.push_back(jnt_tra_point_msg);
-          cnt++;
-        }
-        else
-        {
+        // if (use_moveit_ == true)
+        // {
+        //   trajectory_msgs::msg::JointTrajectoryPoint jnt_tra_point_msg;
+        //   for (uint8_t id_num = 0; id_num < id_cnt; id_num++)
+        //   {
+        //     jnt_tra_point_msg.positions.push_back(goal[id_num].position);
+        //     jnt_tra_point_msg.velocities.push_back(goal[id_num].velocity);
+        //     jnt_tra_point_msg.accelerations.push_back(goal[id_num].acceleration);
+        //   }
+        //   jnt_tra_msg_.points.push_back(jnt_tra_point_msg);
+        //   cnt++;
+        // }
+        // else
+        // {
           jnt_tra_->setJointNum((uint8_t)msg->points[cnt].positions.size());
 
           double move_time = (cnt == 0)
@@ -869,7 +874,7 @@ void DynamixelController::trajectoryMsgCallback(
 
           pre_goal_ = goal;
           cnt++;
-        }
+        // } to remove moveit block
       }
 
       RCLCPP_INFO(this->get_logger(), "Succeeded to get joint trajectory!");
